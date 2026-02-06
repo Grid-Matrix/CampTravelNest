@@ -34,7 +34,7 @@ require_once __DIR__ . '/decorations.php';
                     </div>
                 </div>
 
-                <form id="contact-form" method="POST" novalidate>
+                <form id="contact-form" action="process-contact.php" method="POST" novalidate>
                     <div class="row g-4">
                         <!-- Full Name -->
                         <div class="col-md-6">

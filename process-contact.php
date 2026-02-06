@@ -1,181 +1,120 @@
 <?php
-/**
- * Booking Form Processor
- * Handles form submission and sends email
- */
+// Load email configuration
+require_once __DIR__ . '/config/email-config.php';
 
-// Set response header to JSON
+// Enable error reporting for debugging (disable in production)
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // Don't display errors to users
+
+// Set JSON response header
 header('Content-Type: application/json');
 
-// Include configuration
-require_once 'config/email-config.php';
-
-// Initialize response
+// Response array
 $response = [
     'success' => false,
     'message' => ''
 ];
 
-// Check if form was submitted via POST
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    $response['message'] = 'Invalid request method.';
+// Check if request method is POST
+if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+    $response['message'] = "Invalid request method.";
     echo json_encode($response);
     exit;
 }
 
-// Sanitize and validate form data
-$fullName = filter_input(INPUT_POST, 'fullName', FILTER_SANITIZE_STRING);
-$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-$phone = filter_input(INPUT_POST, 'phone', FILTER_SANITIZE_STRING);
-$subject = filter_input(INPUT_POST, 'subject', FILTER_SANITIZE_STRING);
-$message = filter_input(INPUT_POST, 'message', FILTER_SANITIZE_STRING);
+try {
+    // Sanitize and validate inputs
+    $fullName = filter_var(strip_tags(trim($_POST["fullName"] ?? "")), FILTER_SANITIZE_STRING);
+    $email = filter_var(trim($_POST["email"] ?? ""), FILTER_SANITIZE_EMAIL);
+    $phone = filter_var(strip_tags(trim($_POST["phone"] ?? "")), FILTER_SANITIZE_STRING);
+    $subject = filter_var(strip_tags(trim($_POST["subject"] ?? "")), FILTER_SANITIZE_STRING);
+    $message = filter_var(strip_tags(trim($_POST["message"] ?? "")), FILTER_SANITIZE_STRING);
 
-// Validate required fields
-if (empty($fullName) || empty($email) || empty($phone) || empty($subject) || empty($message)) {
-    $response['message'] = 'Please fill in all required fields.';
-    echo json_encode($response);
-    exit;
-}
+    // Validation checks
+    if (empty($fullName) || strlen($fullName) < 3) {
+        $response['message'] = "Please enter a valid full name (minimum 3 characters).";
+        echo json_encode($response);
+        exit;
+    }
 
-// Validate email format
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $response['message'] = 'Please enter a valid email address.';
-    echo json_encode($response);
-    exit;
-}
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $response['message'] = "Please enter a valid email address.";
+        echo json_encode($response);
+        exit;
+    }
 
-// Prepare subject labels
-$subjectLabels = [
-    'booking' => 'Booking Inquiry',
-    'general' => 'General Question',
-    'facilities' => 'Facilities Information',
-    'feedback' => 'Feedback',
-    'other' => 'Other'
-];
-$subjectLabel = $subjectLabels[$subject] ?? 'Contact Inquiry';
+    if (empty($phone) || !preg_match('/[0-9+\s\-()]{10,15}/', $phone)) {
+        $response['message'] = "Please enter a valid phone number (10-15 digits).";
+        echo json_encode($response);
+        exit;
+    }
 
-// Prepare email content
-$emailSubject = "Contact Form: $subjectLabel from $fullName";
+    if (empty($subject)) {
+        $response['message'] = "Please select a subject.";
+        echo json_encode($response);
+        exit;
+    }
 
-$emailBody = "
-<html>
-<head>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-        .header { background: #2d5e4e; color: white; padding: 20px; text-align: center; }
-        .content { background: #f9f9f9; padding: 20px; }
-        .field { margin-bottom: 15px; }
-        .label { font-weight: bold; color: #2d5e4e; }
-        .footer { background: #eee; padding: 10px; text-align: center; font-size: 12px; color: #666; }
-    </style>
-</head>
-<body>
-    <div class='container'>
-        <div class='header'>
-            <h2>New Contact Form Message</h2>
-        </div>
-        <div class='content'>
-            <div class='field'>
-                <span class='label'>Full Name:</span> $fullName
-            </div>
-            <div class='field'>
-                <span class='label'>Email:</span> $email
-            </div>
-            <div class='field'>
-                <span class='label'>Phone:</span> $phone
-            </div>
-            <div class='field'>
-                <span class='label'>Subject:</span> $subjectLabel
-            </div>
-            <div class='field'>
-                <span class='label'>Message:</span><br>
-                " . nl2br(htmlspecialchars($message)) . "
-            </div>
-        </div>
-        <div class='footer'>
-            <p>This email was sent from the Camp Traveler's Nest contact form.</p>
-        </div>
-    </div>
-</body>
-</html>
-";
+    if (empty($message) || strlen($message) < 10) {
+        $response['message'] = "Please enter a message (minimum 10 characters).";
+        echo json_encode($response);
+        exit;
+    }
 
-// Plain text version for email clients that don't support HTML
-$emailBodyPlain = "
-New Contact Form Message
+    // Configure recipient email from config
+    $recipient = "malpa.ridershp42@gmail.com";
+    
+    // Map subject values to readable text
+    $subjectMap = [
+        'booking' => 'Booking Inquiry',
+        'general' => 'General Question',
+        'facilities' => 'Facilities Information',
+        'feedback' => 'Feedback',
+        'other' => 'Other'
+    ];
+    
+    $subjectText = $subjectMap[$subject] ?? 'Contact Form Submission';
+    $emailSubject = "Camp Traveler's Nest - " . $subjectText;
 
-Full Name: $fullName
-Email: $email
-Phone: $phone
-Subject: $subjectLabel
-Message: $message
+    // Create email body
+    $email_body = "New Contact Form Submission\n\n";
+    $email_body .= "----------------------------------------\n\n";
+    $email_body .= "Full Name: " . $fullName . "\n";
+    $email_body .= "Email: " . $email . "\n";
+    $email_body .= "Phone: " . $phone . "\n";
+    $email_body .= "Subject: " . $subjectText . "\n\n";
+    $email_body .= "Message:\n" . $message . "\n\n";
+    $email_body .= "----------------------------------------\n";
+    $email_body .= "Submitted on: " . date('Y-m-d H:i:s') . "\n";
 
----
-This email was sent from the Camp Traveler's Nest contact form.
-";
-
-// Send email using PHP's mail() function or PHPMailer
-if (USE_PHP_MAIL) {
-    // Using PHP's built-in mail() function
-    $headers = "From: " . FROM_EMAIL . "\r\n";
-    $headers .= "Reply-To: $email\r\n";
+    // Set email headers
+    $headers = "From: Camp Traveler's Nest <noreply@camptravelersnest.com>\r\n";
+    $headers .= "Reply-To: " . $fullName . " <" . $email . ">\r\n";
+    $headers .= "Cc: satyajeet830@gmail.com\r\n"; // Add CC recipient here
+    $headers .= "X-Mailer: PHP/" . phpversion() . "\r\n";
     $headers .= "MIME-Version: 1.0\r\n";
-    $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
-    
-    if (mail(TO_EMAIL, $emailSubject, $emailBody, $headers)) {
+    $headers .= "Content-Type: text/plain; charset=UTF-8\r\n";
+
+    // Send the email
+    if (mail($recipient, $emailSubject, $email_body, $headers)) {
         $response['success'] = true;
-        $response['message'] = 'Your message has been sent successfully! We will get back to you within 24 hours.';
+        $response['message'] = "Thank you! Your message has been sent successfully. We'll get back to you within 24 hours.";
+        
+        // Optional: Log successful submissions
+        // error_log("Contact form submitted by: " . $email);
     } else {
-        $response['message'] = 'Failed to send email. Please try again or contact us directly.';
+        $response['message'] = "Sorry, there was an error sending your message. Please try again later or contact us directly.";
+        
+        // Log the error
+        error_log("Failed to send contact form email from: " . $email);
     }
-} else {
-    // Using PHPMailer (requires PHPMailer library)
-    // Uncomment and configure this section if using PHPMailer
-    /*
-    require 'vendor/autoload.php'; // If using Composer
-    // OR
-    // require 'vendor/phpmailer/phpmailer/src/Exception.php';
-    // require 'vendor/phpmailer/phpmailer/src/PHPMailer.php';
-    // require 'vendor/phpmailer/phpmailer/src/SMTP.php';
-    
-    use PHPMailer\PHPMailer\PHPMailer;
-    use PHPMailer\PHPMailer\Exception;
-    
-    $mail = new PHPMailer(true);
-    
-    try {
-        // SMTP configuration
-        $mail->isSMTP();
-        $mail->Host = SMTP_HOST;
-        $mail->SMTPAuth = SMTP_AUTH;
-        $mail->Username = SMTP_USERNAME;
-        $mail->Password = SMTP_PASSWORD;
-        $mail->SMTPSecure = SMTP_SECURE;
-        $mail->Port = SMTP_PORT;
-        
-        // Recipients
-        $mail->setFrom(FROM_EMAIL, FROM_NAME);
-        $mail->addAddress(TO_EMAIL);
-        $mail->addReplyTo($email, $fullName);
-        
-        // Content
-        $mail->isHTML(true);
-        $mail->Subject = $emailSubject;
-        $mail->Body = $emailBody;
-        $mail->AltBody = $emailBodyPlain;
-        
-        $mail->send();
-        
-        $response['success'] = true;
-        $response['message'] = 'Your message has been sent successfully! We will get back to you within 24 hours.';
-    } catch (Exception $e) {
-        $response['message'] = "Failed to send email. Error: {$mail->ErrorInfo}";
-    }
-    */
-    
-    $response['message'] = 'PHPMailer is not configured. Please update email-config.php and uncomment the PHPMailer code in process-booking.php, or set USE_PHP_MAIL to true.';
+
+} catch (Exception $e) {
+    $response['message'] = "An unexpected error occurred. Please try again later.";
+    error_log("Contact form error: " . $e->getMessage());
 }
 
 // Return JSON response
 echo json_encode($response);
+exit;
+?>
