@@ -476,6 +476,23 @@ h6 {
   color: white;
 }
 
+.btn-call {
+  background: #0ea5e9;
+  color: white;
+  font-weight: 600;
+  box-shadow: var(--shadow-soft);
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-call:hover {
+  background: #0284c7;
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-4px) scale(1.05);
+  filter: brightness(1.1);
+  color: white;
+}
+
 .btn-hero-outline {
   border: 2px solid hsl(var(--primary-foreground) / 0.3);
   background: hsl(var(--primary-foreground) / 0.1);

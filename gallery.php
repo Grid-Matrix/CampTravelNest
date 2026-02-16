@@ -5,7 +5,7 @@ require_once 'config/config.php';
 $galleryImages = [];
 $imageDir = 'assets/images/';
 $allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
-$excludedFiles = ['hero-camping.jpg', 'personal-tent.jpg']; // Files to exclude from gallery
+$excludedFiles = ['hero-camping.jpg', 'personal-tent.jpg', 'Logo.png', 'Logo2.png', 'favicon.png']; // Files to exclude from gallery
 
 if (is_dir($imageDir)) {
     $files = scandir($imageDir);
@@ -91,6 +91,9 @@ if (empty($galleryImages)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gallery | <?php echo SITE_NAME; ?></title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="assets/images/favicon.png" type="image/png">
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">

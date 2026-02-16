@@ -104,6 +104,7 @@ function initParallax() {
  */
 function initNavbarScroll() {
   const navbar = document.querySelector('.navbar');
+  const navbarLogo = document.getElementById('navbar-logo');
   const threshold = 50;
 
   if (!navbar) return;
@@ -116,8 +117,18 @@ function initNavbarScroll() {
   window.addEventListener('scroll', () => {
     if (window.scrollY > threshold) {
       navbar.classList.add('navbar-scrolled');
+
+      // Switch to dark logo when scrolled
+      if (navbarLogo && navbarLogo.dataset.logoDark) {
+        navbarLogo.src = navbarLogo.dataset.logoDark;
+      }
     } else {
       navbar.classList.remove('navbar-scrolled');
+
+      // Switch to light logo when at top
+      if (navbarLogo && navbarLogo.dataset.logoLight) {
+        navbarLogo.src = navbarLogo.dataset.logoLight;
+      }
     }
   });
 }

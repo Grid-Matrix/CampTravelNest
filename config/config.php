@@ -23,7 +23,7 @@ define('SOCIAL_TWITTER', '#');
 define('SOCIAL_YOUTUBE', '#');
 
 // Location
-define('LOCATION_ADDRESS', "Camp Traveler's Nest<br>Wilderness Road, Nature Valley<br>Adventure District");
+define('LOCATION_ADDRESS', "Travellers Nest Camp Sarchu Leh Manali Highway, near Ladakh Border, Sarchu, Himachal Pradesh - 175132");
 
 // Navigation Menu
 $nav_links = [

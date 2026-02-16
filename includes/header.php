@@ -6,17 +6,13 @@ require_once __DIR__ . '/decorations.php';
 <nav class="navbar navbar-expand-lg fixed-top py-3 <?php echo (isset($forceDarkHeader) && $forceDarkHeader) ? 'navbar-scrolled navbar-always-scrolled' : 'bg-transparent'; ?>" <?php echo (isset($forceDarkHeader) && $forceDarkHeader) ? 'data-bs-theme="light"' : ''; ?>>
     <div class="container">
         <!-- Logo -->
-        <a class="navbar-brand d-flex align-items-center gap-3 text-decoration-none" href="#home">
-            <div class="position-relative">
-                <div class="rounded-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: var(--gradient-emerald);">
-                    <?php echo renderTentIcon('text-white'); ?>
-                </div>
-                <div class="position-absolute top-0 end-0 translate-middle-y rounded-circle animate-pulse-soft" style="width: 12px; height: 12px; background: hsl(var(--secondary));"></div>
-            </div>
-            <div class="d-flex flex-column navbar-brand-text">
-                <span class="fw-bold lh-sm" style="font-size: 1.25rem; font-family: var(--font-display); letter-spacing: -0.02em;">Camp Traveler's</span>
-                <span class="fw-semibold lh-sm" style="font-size: 1.125rem; font-family: var(--font-display); color: hsl(var(--secondary));">Nest</span>
-            </div>
+        <a class="navbar-brand d-flex align-items-center gap-2 text-decoration-none" href="index.php">
+            <img id="navbar-logo" 
+                 src="assets/images/<?php echo (isset($forceDarkHeader) && $forceDarkHeader) ? 'Logo2.png' : 'Logo.png'; ?>" 
+                 alt="Camp Traveler's Nest Logo" 
+                 style="height: 80px; width: auto; transition: opacity 0.3s ease;"
+                 data-logo-light="assets/images/Logo.png"
+                 data-logo-dark="assets/images/Logo2.png">
         </a>
 
         <!-- Mobile Toggle Button -->

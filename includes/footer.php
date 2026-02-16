@@ -9,13 +9,7 @@ require_once __DIR__ . '/../config/config.php';
             <!-- Brand -->
             <div class="col-lg-3">
                 <div class="d-flex align-items-center gap-3 mb-4">
-                    <div class="rounded-3 shadow-sm d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: hsl(var(--primary-foreground) / 0.1);">
-                        <?php echo renderTentIcon('text-white'); ?>
-                    </div>
-                    <div class="d-flex flex-column">
-                        <span class="fw-bold lh-sm" style="font-size: 1.25rem; font-family: var(--font-display);">Camp Traveler's</span>
-                        <span class="fw-semibold lh-sm" style="font-size: 1.125rem; font-family: var(--font-display); color: hsl(var(--secondary));">Nest</span>
-                    </div>
+                    <img src="assets/images/Logo.png" alt="Camp Traveler's Nest Logo" style="height: 50px; width: auto;">
                 </div>
                 <p class="mb-4" style="font-family: var(--font-body); opacity: 0.85; line-height: 1.7;">
                     Experience the perfect blend of adventure and comfort. Your gateway to unforgettable camping memories awaits.

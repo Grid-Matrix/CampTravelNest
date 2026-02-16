@@ -17,11 +17,7 @@ require_once __DIR__ . '/decorations.php';
     <!-- Content -->
     <div class="container position-relative text-center" style="z-index: 3;">
         <div class="mx-auto" style="max-width: 56rem;">
-            <!-- Badge -->
-            <div class="d-inline-flex align-items-center gap-2 px-4 py-2 rounded-pill mb-4 animate-fade-in-down" style="background: hsl(var(--primary-foreground) / 0.1); backdrop-filter: blur(10px); border: 1px solid hsl(var(--primary-foreground) / 0.2);">
-                <span class="rounded-circle animate-pulse-soft" style="width: 8px; height: 8px; background: hsl(var(--secondary));"></span>
-                <span class="text-white" style="font-family: var(--font-body); font-size: 0.875rem; opacity: 0.9;">Premium Camping Experience</span>
-            </div>
+
 
             <!-- Main Heading -->
             <h1 class="text-white mb-4 animate-fade-in-up" style="font-family: var(--font-display); font-size: clamp(2.5rem, 8vw, 6rem); font-weight: 700; line-height: 1.1;">
@@ -34,10 +30,15 @@ require_once __DIR__ . '/decorations.php';
             </p>
 
             <!-- CTA Buttons -->
+            <!-- CTA Buttons -->
             <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center mb-5 animate-fade-in-up delay-400">
                 <button type="button" class="btn btn-hero px-5 py-3 rounded-3" style="font-size: 1.125rem;" data-bs-toggle="modal" data-bs-target="#bookingModal">
                     <i class="bi bi-calendar-check me-2"></i>Book Your Stay
                 </button>
+                <a href="https://wa.me/<?php echo WHATSAPP_NUMBER; ?>" target="_blank" class="btn btn-whatsapp px-5 py-3 rounded-3" style="font-size: 1.125rem;">
+                    <i class="bi bi-whatsapp me-2"></i>WhatsApp
+                </a>
+
             </div>
 
             <!-- Stats -->

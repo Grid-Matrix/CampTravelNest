@@ -100,4 +100,11 @@ require_once __DIR__ . '/decorations.php';
     height: 4rem;
     transform: translateX(-50%);
 }
+
+/* Hide stats card on mobile */
+@media (max-width: 768px) {
+    #about .bg-white.shadow-elevated {
+        display: none !important;
+    }
+}
 </style>
